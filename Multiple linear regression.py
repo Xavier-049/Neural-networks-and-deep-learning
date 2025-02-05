@@ -1,26 +1,47 @@
 import numpy as np
-x1=np.array([137.97,104.50,100.00,124.32,79.20,99.00,124.00,114.00,
-             106.69,138.05,53.75,46.91,68.00,63.02,81.26,86.21])
-x2=np.array([3,2,2,3,1,2,3,2,2,3,1,1,1,1,2,2])
-y=np.array([145.00,110.00,93.00,116.00,65.32,104.00,118.00,91.00,
-            62.00,133.00,51.00,45.00,78.50,69.65,75.69,95.30])
-x1.shape,x2.shape,y.shape
-x0=np.ones(len(x1))
 
-X=np.stack((x0,x1,x2), axis = 1)
-Y= np.array(y).reshape(-1, 1)
+# 定义输入数据x1，表示房屋面积
+x1 = np.array([137.97, 104.50, 100.00, 124.32, 79.20, 99.00, 124.00, 114.00,
+               106.69, 138.05, 53.75, 46.91, 68.00, 63.02, 81.26, 86.21])
+# 定义输入数据x2，表示房间数
+x2 = np.array([3, 2, 2, 3, 1, 2, 3, 2, 2, 3, 1, 1, 1, 1, 2, 2])
+# 定义目标数据y，表示房屋价格
+y = np.array([145.00, 110.00, 93.00, 116.00, 65.32, 104.00, 118.00, 91.00,
+              62.00, 133.00, 51.00, 45.00, 78.50, 69.65, 75.69, 95.30])
 
-Xt=np.transpose(X)
-XtX_1 = np.linalg.inv(np.matmul(Xt,X))
-XtX_1_Xt= np.matmul(XtX_1,Xt)
-W= np.matmul(XtX_1_Xt,Y)
+# 打印x1、x2和y的形状，检查数据维度是否一致
+print(x1.shape, x2.shape, y.shape)
 
-W=W.reshape(-1)
+# 创建一个全为1的数组x0，作为常数项（偏置项）的特征
+x0 = np.ones(len(x1))
+
+# 将x0、x1和x2堆叠成一个特征矩阵X，每行表示一个样本，每列表示一个特征
+X = np.stack((x0, x1, x2), axis=1)
+# 将目标数据y转换为列向量形式
+Y = np.array(y).reshape(-1, 1)
+
+# 计算X的转置矩阵Xt
+Xt = np.transpose(X)
+# 计算(XtX)的逆矩阵XtX_1
+XtX_1 = np.linalg.inv(np.matmul(Xt, X))
+# 计算XtX_1乘以Xt的结果
+XtX_1_Xt = np.matmul(XtX_1, Xt)
+# 计算权重矩阵W
+W = np.matmul(XtX_1_Xt, Y)
+
+# 将权重矩阵W转换为一维数组
+W = W.reshape(-1)
+# 打印多元线性回归方程
 print("多元线性回归方程：")
 print("Y=", W[1], "*x1+", W[2], "*x2+", W[0])
 
+# 提示用户输入房屋面积和房间数，用于预测房屋销售价格
 print("请输入房屋面积和房间数，预测房屋销售价格：")
-x1_test=float(input("商品房面积："))
-x2_test=int(input("房间数："))
-y_pred = W[1]*x1_test+W[2]*x2_test+W[0]
-print ("预测价格：",round(y_pred,2),"万元")
+# 输入房屋面积
+x1_test = float(input("商品房面积："))
+# 输入房间数
+x2_test = int(input("房间数："))
+# 使用回归方程计算预测价格
+y_pred = W[1] * x1_test + W[2] * x2_test + W[0]
+# 打印预测价格，保留两位小数
+print("预测价格：", round(y_pred, 2), "万元")
